@@ -1,21 +1,15 @@
-import re
-import uuid
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
 
-from pydantic.v1 import Field, BaseModel, EmailStr, validator
-from custormer.exception.InvalidPhoneNumberException import InvalidPhoneNumberException
+from custormer.entities.BaseEntities import BaseEntity
 
 
-class User(BaseModel):
-    id : uuid.UUID = Field(default_factory=lambda: uuid.uuid4())
-    first_name: str
-    last_name: str
-    email: EmailStr
-    phone: str
+class User(BaseEntity):
+    __tablename__ = 'users'
 
-    @validator('phone')
-    def validate_phone(cls, v):
-        regex = r"^(\+)[1-9][0-9\-\(\)\.]{9,15}$"
-        if v and not re.search(regex, v, re.I):
-            raise InvalidPhoneNumberException("Invalid Phone Number.")
-        return v
+    first_name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
+    username = Column(String(50), unique=True, nullable=False)
+    password = Column(String(255), nullable=False)
 
+    orders = relationship("Order", back_populates="user")

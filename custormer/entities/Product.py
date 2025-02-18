@@ -1,14 +1,19 @@
-from custormer.entities.BaseEntities import BaseEntity
+from sqlalchemy import Column, String, Integer, DECIMAL, Table, ForeignKey
 
+from custormer.entities.BaseEntities import BaseEntity, Base
+from sqlalchemy.orm import declarative_base
 
-class Product(BaseEntity) :
-    name : str
-    price : float
+class Product(BaseEntity):
+    __tablename__ = 'products'
 
-    def __init__(self, name, price):
-        super().__init__()
-        self.name = name
-        self.price = price
+    name = Column(String(100), nullable=False)
+    quantity = Column(Integer, nullable=False)
+    price = Column(DECIMAL(18, 2), nullable=False)
 
-    def display(self):
-        print(BaseEntity.display(self), self.name )
+order_product_association = Table(
+    'order_details', Base.metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('order_id', Integer, ForeignKey('orders.id')),
+    Column('product_id', Integer, ForeignKey('products.id')),
+    Column('quantity', Integer, nullable=False)
+)

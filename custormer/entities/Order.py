@@ -1,15 +1,14 @@
+from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy.orm import relationship
+
 from custormer.entities.BaseEntities import BaseEntity
-from custormer.entities.Product import Product
+from custormer.entities.Product import Product, order_product_association
 
 
 class Order(BaseEntity):
-    product : Product
-    product_id : int
-    quantity : int
+    __tablename__ = 'orders'
 
-    def __init__(self, product , product_id, quantity):
-        super().__init__()
-        self.product = product
-        self.product_id = product_id
-        self.quantity = quantity
+    order_by_User = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user = relationship("User", back_populates="orders")
+    products = relationship("Product", secondary=order_product_association)
 
